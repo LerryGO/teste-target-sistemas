@@ -26,4 +26,5 @@ void run() {
   }
 
   print("Valor da soma: $soma");
+  // Reposta: Valor da soma: 77
 }

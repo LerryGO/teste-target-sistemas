@@ -11,6 +11,68 @@ b) Podem existir dias sem faturamento, como nos finais de semana e feriados. Est
 c) Utilize o algoritmo mais veloz que puder definir. */
 
 // Valores Gerados para teste
+
+void run() {
+  // Vetor com os valores de faturamento diário
+  List<double?> dailyRevenue = _valuesList();
+
+  // Chama a função para calcular os resultados
+  final Map<String, dynamic> result = _calculateRevenueStats(dailyRevenue);
+
+  // Exibindo os resultados
+  print(
+      'Menor valor de faturamento ocorrido em um dia do ano: R\$${result['minValue'].toStringAsFixed(2)}');
+  print(
+      'Maior valor de faturamento ocorrido em um dia do ano: R\$${result['maxValue'].toStringAsFixed(2)}');
+  print(
+      'Número de dias com faturamento acima da média no ano: ${result['daysAboveAverage']}');
+}
+
+// Função para calcular as estatísticas de faturamento
+Map<String, dynamic> _calculateRevenueStats(List<double?> dailyRevenue) {
+  double? minValue;
+  double? maxValue;
+  double totalRevenue = 0.0;
+  int countDaysWithRevenue = 0;
+
+  // Calculando menor, maior valor e soma do faturamento
+  for (var revenue in dailyRevenue) {
+    // Considera null como 0
+    double value = revenue ?? 0.0;
+
+    // Dias sem faturamento será ignorado
+    if (value > 0) {
+      // Definindo o maior e menor valor
+      if (minValue == null || value < minValue) {
+        // Caso for o menor valor
+        minValue = value;
+      }
+      if (maxValue == null || value > maxValue) {
+        // Caso for o maior valor
+        maxValue = value;
+      }
+      totalRevenue += value; // Soma o faturamento com o total já adicionado
+      countDaysWithRevenue++; // incrementa +1 dia
+    }
+  }
+
+  // Calculando média anual, se houver dias com faturamento
+  double averageRevenue =
+      countDaysWithRevenue > 0 ? totalRevenue / countDaysWithRevenue : 0;
+
+  // Contando dias com faturamento acima da média
+  int daysAboveAverage = dailyRevenue
+      .where((revenue) => revenue != null && revenue > averageRevenue)
+      .length;
+
+  // Retornando os resultados em um mapa
+  return {
+    'minValue': minValue ?? 0,
+    'maxValue': maxValue ?? 0,
+    'daysAboveAverage': daysAboveAverage,
+  };
+}
+
 List<double?> _valuesList() {
   return [
     90.0,
@@ -214,65 +276,4 @@ List<double?> _valuesList() {
     null,
     900.0,
   ];
-}
-
-void run() {
-  // Vetor com os valores de faturamento diário
-  List<double?> dailyRevenue = _valuesList();
-
-  // Chama a função para calcular os resultados
-  final Map<String, dynamic> result = _calculateRevenueStats(dailyRevenue);
-
-  // Exibindo os resultados
-  print(
-      'Menor valor de faturamento ocorrido em um dia do ano: R\$${result['minValue'].toStringAsFixed(2)}');
-  print(
-      'Maior valor de faturamento ocorrido em um dia do ano: R\$${result['maxValue'].toStringAsFixed(2)}');
-  print(
-      'Número de dias com faturamento acima da média no ano: ${result['daysAboveAverage']}');
-}
-
-// Função para calcular as estatísticas de faturamento
-Map<String, dynamic> _calculateRevenueStats(List<double?> dailyRevenue) {
-  double? minValue;
-  double? maxValue;
-  double totalRevenue = 0.0;
-  int countDaysWithRevenue = 0;
-
-  // Calculando menor, maior valor e soma do faturamento
-  for (var revenue in dailyRevenue) {
-    // Considera null como 0
-    double value = revenue ?? 0.0;
-
-    // Dias sem faturamento será ignorado
-    if (value > 0) {
-      // Definindo o maior e menor valor
-      if (minValue == null || value < minValue) {
-        // Caso for o menor valor
-        minValue = value;
-      }
-      if (maxValue == null || value > maxValue) {
-        // Caso for o maior valor
-        maxValue = value;
-      }
-      totalRevenue += value; // Soma o faturamento com o total já adicionado
-      countDaysWithRevenue++; // incrementa +1 dia
-    }
-  }
-
-  // Calculando média anual, se houver dias com faturamento
-  double averageRevenue =
-      countDaysWithRevenue > 0 ? totalRevenue / countDaysWithRevenue : 0;
-
-  // Contando dias com faturamento acima da média
-  int daysAboveAverage = dailyRevenue
-      .where((revenue) => revenue != null && revenue > averageRevenue)
-      .length;
-
-  // Retornando os resultados em um mapa
-  return {
-    'minValue': minValue ?? 0,
-    'maxValue': maxValue ?? 0,
-    'daysAboveAverage': daysAboveAverage,
-  };
 }
